@@ -16,7 +16,7 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 WEBAPP_URL = os.getenv("WEBAPP_URL")
 
 if not BOT_TOKEN:
-    raise ValueError(" Не указан BOT_TOKEN в файле .env")
+    raise ValueError("❌ Не указан BOT_TOKEN в файле .env")
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
@@ -94,7 +94,7 @@ async def web_app_data_handler(message: types.Message):
 # --- Запуск ---
 async def main():
     init_db()
-    print("🚀 Бот запущен. Жду команды...")
+    print(" Бот запущен. Жду команды...")
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
