@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Vincenzo - Итальянская кухня</title>
+  
+  <!-- Подключаем Telegram WebApp SDK - ЭТО ОБЯЗАТЕЛЬНО! -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  
+  <!-- Наши стили -->
+  <link rel="stylesheet" href="css/style.css">
+  
+  <!-- Итальянские шрифты -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  
+  <!-- Шапка с переключением Доставка/Самовывоз -->
+  <header class="header">
+    <div class="header-top">
+      <h1 class="logo">🇮 Vincenzo</h1>
+      <div class="mode-switch">
+        <button class="mode-btn active" data-mode="delivery">Доставка</button>
+        <button class="mode-btn" data-mode="pickup">Самовывоз</button>
+      </div>
+    </div>
+    
+    <!-- Поле адреса -->
+    <div class="address-block" id="addressBlock">
+      <span class="location-icon">📍</span>
+      <input type="text" id="addressInput" placeholder="Укажите адрес доставки" class="address-input">
+    </div>
+    
+    <!-- Предупреждение об оплате -->
+    <div class="payment-notice">
+      <span class="notice-icon">⚠️</span>
+      <span>Доставка оплачивается курьеру при получении</span>
+    </div>
+  </header>
+
+  <!-- Категории меню (горизонтальная прокрутка) -->
+  <nav class="categories">
+    <button class="category-btn active" data-category="pizza">🍕 Пицца</button>
+    <button class="category-btn" data-category="rolls"> Роллы</button>
+    <button class="category-btn" data-category="soups">🍲 Супы</button>
+    <button class="category-btn" data-category="salads">🥗 Салаты</button>
+    <button class="category-btn" data-category="pasta">🍝 Паста</button>
+    <button class="category-btn" data-category="drinks">🍷 Напитки</button>
+  </nav>
+
+  <!-- Сетка товаров -->
+  <main class="menu-grid" id="menuGrid">
+    <!-- Сюда JavaScript добавит карточки товаров -->
+  </main>
+
+  <!-- Панель корзины (фиксированная внизу) -->
+  <div class="cart-panel" id="cartPanel">
+    <div class="cart-info">
+      <span class="cart-count" id="cartCount">0 позиций</span>
+      <span class="cart-total" id="cartTotal">0 ₽</span>
+    </div>
+    <button class="checkout-btn" id="checkoutBtn" disabled>
+      Оформить заказ
+    </button>
+  </div>
+
+  <!-- Нижняя навигация -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active">
+      <span class="nav-icon">📋</span>
+      <span class="nav-text">Меню</span>
+    </button>
+    <button class="nav-btn">
+      <span class="nav-icon">👤</span>
+      <span class="nav-text">Профиль</span>
+    </button>
+    <button class="nav-btn">
+      <span class="nav-icon">📱</span>
+      <span class="nav-text">QR-код</span>
+    </button>
+    <button class="nav-btn">
+      <span class="nav-icon">❤️</span>
+      <span class="nav-text">Избранное</span>
+    </button>
+    <button class="nav-btn" id="cartNavBtn">
+      <span class="nav-icon">🛒</span>
+      <span class="nav-text">Корзина</span>
+    </button>
+  </nav>
+
+  <!-- Подключаем наш JavaScript -->
+  <script src="js/app.js"></script>
+</body>
+</html>
