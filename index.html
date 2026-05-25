@@ -1,144 +1,76 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vincenzo - Итальянская кухня</title>
-    
-    <!-- Telegram WebApp SDK -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    
-    <!-- Итальянские шрифты -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
-    
-    <!-- Иконки -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <!-- Шапка -->
-    <header class="header">
-        <div class="header-top">
-            <button class="back-btn"><i class="fas fa-chevron-left"></i></button>
-            <h1 class="logo">VINCENZO</h1>
-            <div class="header-actions">
-                <button class="icon-btn"><i class="fas fa-info-circle"></i></button>
-                <button class="icon-btn"><i class="fas fa-search"></i></button>
-            </div>
-        </div>
-        
-        <!-- Переключатель Доставка/Самовывоз -->
-        <div class="delivery-mode">
-            <button class="mode-btn active" data-mode="delivery">
-                <i class="fas fa-motorcycle"></i> Доставка
-            </button>
-            <button class="mode-btn" data-mode="pickup">
-                <i class="fas fa-shopping-bag"></i> Самовывоз
-            </button>
-        </div>
-        
-        <!-- Адрес -->
-        <div class="address-block">
-            <i class="fas fa-map-marker-alt location-icon"></i>
-            <input type="text" class="address-input" placeholder="Указать свой адрес" id="addressInput">
-        </div>
-        
-        <!-- Предупреждение -->
-        <div class="notice-banner">
-            <i class="fas fa-exclamation-triangle notice-icon"></i>
-            <span class="notice-text">Принимаем заказы с 11:00</span>
-        </div>
-    </header>
+<!-- Основной контент (меню) -->
+<main class="main-content page active" id="page-menu">
+    <div id="menuContainer"></div>
+</main>
 
-    <!-- Категории -->
-    <nav class="categories-nav">
-        <button class="category-btn active" data-category="pizza">
-            <span class="cat-icon">🍕</span>
-            <span>Пицца</span>
-        </button>
-        <button class="category-btn" data-category="rolls">
-            <span class="cat-icon">🍱</span>
-            <span>Роллы</span>
-        </button>
-        <button class="category-btn" data-category="soups">
-            <span class="cat-icon">🍲</span>
-            <span>Супы</span>
-        </button>
-        <button class="category-btn" data-category="salads">
-            <span class="cat-icon">🥗</span>
-            <span>Салаты</span>
-        </button>
-        <button class="category-btn" data-category="pasta">
-            <span class="cat-icon">🍝</span>
-            <span>Паста</span>
-        </button>
-    </nav>
-
-    <!-- Основной контент -->
-    <main class="main-content" id="menuContainer">
-        <!-- Карточка товара -->
-        <div class="product-card">
-            <div class="product-image-wrapper">
-                <img src="https://images.unsplash.com/photo-1574126154517-d1e0d89e7344?w=600" 
-                     alt="Пицца с сыром буррата" 
-                     class="product-image">
-                <button class="favorite-btn">
-                    <i class="far fa-heart"></i>
-                </button>
-                <div class="product-badge">Хит</div>
-            </div>
-            
-            <div class="product-info">
-                <div class="product-header">
-                    <h3 class="product-name">Пицца с сыром буррата</h3>
-                    <span class="product-weight">650 г</span>
-                </div>
-                
-                <p class="product-description">
-                    Томатный соус, сыр моцарелла, сыр буррата, помидоры, соус песто, руккола
-                </p>
-                
-                <div class="product-footer">
-                    <div class="product-price-block">
-                        <span class="product-price">850 ₽</span>
-                        <span class="product-weight-small">660 г</span>
-                    </div>
-                    <button class="add-to-cart-btn">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                </div>
-            </div>
+<!-- Страница Профиль -->
+<main class="main-content page" id="page-profile">
+    <div class="profile-header">
+        <div class="profile-avatar">А</div>
+        <div class="profile-info">
+            <h3>Александр</h3>
+            <div class="profile-phone">+7 (988) 831-47-51</div>
         </div>
-    </main>
+    </div>
 
-    <!-- Нижняя навигация -->
-    <nav class="bottom-nav">
-        <button class="nav-item active" data-page="menu">
-            <i class="fas fa-th-large nav-icon"></i>
-            <span class="nav-text">Меню</span>
-        </button>
-        <button class="nav-item" data-page="profile">
-            <i class="fas fa-user nav-icon"></i>
-            <span class="nav-text">Профиль</span>
-        </button>
-        <button class="nav-item" data-page="qr">
-            <i class="fas fa-qrcode nav-icon"></i>
-            <span class="nav-text">Qr-код</span>
-        </button>
-        <button class="nav-item" data-page="favorites">
-            <i class="fas fa-heart nav-icon"></i>
-            <span class="nav-text">Любимые</span>
-        </button>
-        <button class="nav-item" data-page="cart">
-            <i class="fas fa-shopping-bag nav-icon"></i>
-            <span class="nav-text">Корзина</span>
-            <span class="cart-badge" id="cartBadge">0</span>
-        </button>
-    </nav>
+    <div class="profile-stats">
+        <div class="stat-card">
+            <div class="stat-value">Start</div>
+            <div class="stat-label">Уровень кэшбэка</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">0 ₽</div>
+            <div class="stat-label">Бонусы</div>
+        </div>
+    </div>
 
-    <script src="app.js"></script>
-</body>
-</html>
+    <div class="profile-menu">
+        <button class="profile-item" onclick="navigateTo('favorites')">
+            <i class="fas fa-heart"></i> Любимые
+        </button>
+        <button class="profile-item">
+            <i class="fas fa-qrcode"></i> QR-код
+        </button>
+        <button class="profile-item">
+            <i class="fas fa-clock"></i> История заказов
+        </button>
+        <button class="profile-item">
+            <i class="fas fa-gift"></i> Начисления баллов
+        </button>
+    </div>
+
+    <div class="profile-menu" style="margin-top: 16px;">
+        <div class="toggle-row">
+            <span>Уведомления</span>
+            <div class="toggle-switch active" id="notifToggle" onclick="this.classList.toggle('active')"></div>
+        </div>
+        <button class="profile-item" style="color: var(--primary);">
+            <i class="fas fa-sign-out-alt"></i> Выйти
+        </button>
+    </div>
+</main>
+
+<!-- Страница Любимое -->
+<main class="main-content page" id="page-favorites">
+    <h2 style="margin-bottom: 16px; font-size: 20px;">❤️ Любимые блюда</h2>
+    <div id="favoritesEmpty" class="favorites-empty">
+        <i class="far fa-heart"></i>
+        <p>Здесь будут ваши избранные блюда</p>
+        <p style="font-size: 13px; margin-top: 8px;">Нажмите ♥ на карточке товара</p>
+    </div>
+    <div id="favoritesGrid" class="favorites-grid"></div>
+</main>
+
+<!-- Страница Корзина (заглушка) -->
+<main class="main-content page" id="page-cart">
+    <h2 style="margin-bottom: 16px;">🛒 Корзина</h2>
+    <div id="cartContainer"></div>
+</main>
+
+<!-- Страница Детали товара -->
+<main class="main-content page" id="page-product">
+    <button id="backBtn" onclick="goBack()" style="background:none;border:none;font-size:18px;margin-bottom:12px;">
+        <i class="fas fa-chevron-left"></i> Назад
+    </button>
+    <div id="productDetail"></div>
+</main>
