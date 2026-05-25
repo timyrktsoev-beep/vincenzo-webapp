@@ -1,317 +1,192 @@
-// ===== ИНИЦИАЛИЗАЦИЯ TELEGRAM WEBAPP =====
-// Это самый важный момент! Без этого приложение не будет работать в Telegram
-
+// Инициализация Telegram WebApp
 const tg = window.Telegram.WebApp;
-
-// Сообщаем Telegram, что приложение готово
 tg.ready();
-
-// Разворачиваем приложение на весь экран
 tg.expand();
 
-// Устанавливаем цвета под тему Telegram (опционально)
-tg.setHeaderColor('#C41E3A'); // Красный цвет шапки
-tg.setBackgroundColor('#FFFBF0'); // Кремовый фон
+// Установка цветов темы
+tg.setHeaderColor('#C41E3A');
+tg.setBackgroundColor('#FAF7F2');
 
-// ===== ДАННЫЕ МЕНЮ (в реальном проекте это будет API) =====
+// Данные меню
 const menuData = {
-  pizza: [
-    {
-      id: 1,
-      name: 'Пицца с сыром буррата',
-      weight: '650 г',
-      description: 'Томатный соус, сыр моцарелла, сыр буррата, помидоры, соус песто, руккола',
-      price: 850,
-      image: 'https://images.unsplash.com/photo-1574126154517-d1e0d89e7344?w=400'
-    },
-    {
-      id: 2,
-      name: 'Маргарита',
-      weight: '500 г',
-      description: 'Томатный соус, моцарелла, пармезан, базилик, оливковое масло',
-      price: 550,
-      image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=400'
-    },
-    {
-      id: 3,
-      name: 'Пепперони',
-      weight: '600 г',
-      description: 'Томатный соус, моцарелла, пепперони, острый перец, орегано',
-      price: 720,
-      image: 'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=400'
-    }
-  ],
-  rolls: [
-    {
-      id: 4,
-      name: 'Филадельфия',
-      weight: '280 г',
-      description: 'Лосось, сливочный сыр, огурец, авокадо, рис, нори',
-      price: 620,
-      image: 'https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=400'
-    }
-  ],
-  soups: [
-    {
-      id: 5,
-      name: 'Минестроне',
-      weight: '350 г',
-      description: 'Овощной суп с фасолью, цуккини, томатами и базиликом',
-      price: 380,
-      image: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400'
-    }
-  ],
-  salads: [
-    {
-      id: 6,
-      name: 'Цезарь с курицей',
-      weight: '300 г',
-      description: 'Салат ромэн, куриная грудка, пармезан, сухарики, соус цезарь',
-      price: 490,
-      image: 'https://images.unsplash.com/photo-1550304943-4f24f54ddde9?w=400'
-    }
-  ],
-  pasta: [
-    {
-      id: 7,
-      name: 'Карбонара',
-      weight: '320 г',
-      description: 'Спагетти, гуанчиале, яйца, пекорино романо, чёрный перец',
-      price: 580,
-      image: 'https://images.unsplash.com/photo-1612874742237-6526221588e3?w=400'
-    }
-  ],
-  drinks: [
-    {
-      id: 8,
-      name: 'Лимонад домашний',
-      weight: '400 мл',
-      description: 'Свежевыжатый лимонад с мятой и лимоном',
-      price: 250,
-      image: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=400'
-    }
-  ]
+    pizza: [
+        {
+            id: 1,
+            name: 'Пицца с сыром буррата',
+            weight: '650 г',
+            description: 'Томатный соус, сыр моцарелла, сыр буррата, помидоры, соус песто, руккола',
+            price: 850,
+            weightFull: '660 г',
+            image: 'https://images.unsplash.com/photo-1574126154517-d1e0d89e7344?w=600',
+            badge: 'Хит',
+            isFavorite: false
+        },
+        {
+            id: 2,
+            name: 'Маргарита',
+            weight: '500 г',
+            description: 'Томатный соус, моцарелла, пармезан, базилик, оливковое масло',
+            price: 550,
+            weightFull: '520 г',
+            image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=600',
+            badge: null,
+            isFavorite: false
+        },
+        {
+            id: 3,
+            name: 'Пепперони',
+            weight: '600 г',
+            description: 'Томатный соус, моцарелла, пепперони, острый перец, орегано',
+            price: 720,
+            weightFull: '620 г',
+            image: 'https://images.unsplash.com/photo-1628840042765-356cda07504e?w=600',
+            badge: 'Новинка',
+            isFavorite: false
+        }
+    ],
+    rolls: [],
+    soups: [],
+    salads: [],
+    pasta: []
 };
 
-// ===== СОСТОЯНИЕ ПРИЛОЖЕНИЯ =====
-let cart = {}; // Объект для хранения корзины { productId: quantity }
+let cart = {};
 let currentCategory = 'pizza';
-let deliveryMode = 'delivery';
 
-// ===== DOM ЭЛЕМЕНТЫ =====
-const menuGrid = document.getElementById('menuGrid');
-const cartCountEl = document.getElementById('cartCount');
-const cartTotalEl = document.getElementById('cartTotal');
-const checkoutBtn = document.getElementById('checkoutBtn');
-const cartPanel = document.getElementById('cartPanel');
-const addressInput = document.getElementById('addressInput');
-const addressBlock = document.getElementById('addressBlock');
-
-// ===== ИНИЦИАЛИЗАЦИЯ =====
+// Инициализация
 function init() {
-  renderMenu();
-  setupEventListeners();
-  updateCartUI();
-  
-  // Показываем главную кнопку Telegram (опционально)
-  if (tg.MainButton) {
-    tg.MainButton.setText('ОФОРМИТЬ ЗАКАЗ');
-    tg.MainButton.onClick(() => submitOrder());
-  }
+    renderMenu();
+    setupEventListeners();
 }
 
-// ===== ОТРИСОВКА МЕНЮ =====
+// Отрисовка меню
 function renderMenu() {
-  const items = menuData[currentCategory] || [];
-  
-  menuGrid.innerHTML = items.map(item => {
-    const quantity = cart[item.id] || 0;
+    const container = document.getElementById('menuContainer');
+    const items = menuData[currentCategory] || [];
     
-    return `
-      <div class="product-card" data-id="${item.id}">
-        <img src="${item.image}" alt="${item.name}" class="product-image" 
-             onerror="this.src='https://via.placeholder.com/400x220?text=${encodeURIComponent(item.name)}'">
-        <div class="product-info">
-          <div class="product-header">
-            <h3 class="product-name">${item.name}</h3>
-            <span class="product-weight">${item.weight}</span>
-          </div>
-          <p class="product-description">${item.description}</p>
-          <div class="product-footer">
-            <span class="product-price">${item.price} ₽</span>
-            <div class="product-controls">
-              ${quantity > 0 ? `
-                <button class="qty-btn minus" onclick="updateQuantity(${item.id}, -1)">−</button>
-                <span class="qty-value">${quantity}</span>
-                <button class="qty-btn plus" onclick="updateQuantity(${item.id}, 1)">+</button>
-              ` : `
-                <button class="qty-btn add" onclick="addToCart(${item.id})">В корзину</button>
-              `}
+    container.innerHTML = items.map(item => `
+        <div class="product-card" data-id="${item.id}">
+            <div class="product-image-wrapper">
+                <img src="${item.image}" alt="${item.name}" class="product-image" 
+                     onerror="this.src='https://via.placeholder.com/600x400?text=${encodeURIComponent(item.name)}'">
+                <button class="favorite-btn ${item.isFavorite ? 'active' : ''}" onclick="toggleFavorite(${item.id})">
+                    <i class="${item.isFavorite ? 'fas' : 'far'} fa-heart"></i>
+                </button>
+                ${item.badge ? `<div class="product-badge">${item.badge}</div>` : ''}
             </div>
-          </div>
+            
+            <div class="product-info">
+                <div class="product-header">
+                    <h3 class="product-name">${item.name}</h3>
+                    <span class="product-weight">${item.weight}</span>
+                </div>
+                
+                <p class="product-description">${item.description}</p>
+                
+                <div class="product-footer">
+                    <div class="product-price-block">
+                        <span class="product-price">${item.price} ₽</span>
+                        <span class="product-weight-small">${item.weightFull}</span>
+                    </div>
+                    <button class="add-to-cart-btn" onclick="addToCart(${item.id})">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            </div>
         </div>
-      </div>
-    `;
-  }).join('');
+    `).join('');
 }
 
-// ===== УПРАВЛЕНИЕ КОРЗИНОЙ =====
-function addToCart(productId) {
-  cart[productId] = (cart[productId] || 0) + 1;
-  renderMenu();
-  updateCartUI();
-  
-  // Вибрация (если поддерживается)
-  if (tg.HapticFeedback) {
-    tg.HapticFeedback.impactOccurred('light');
-  }
-}
-
-function updateQuantity(productId, delta) {
-  cart[productId] = (cart[productId] || 0) + delta;
-  
-  if (cart[productId] <= 0) {
-    delete cart[productId];
-  }
-  
-  renderMenu();
-  updateCartUI();
-  
-  if (tg.HapticFeedback) {
-    tg.HapticFeedback.impactOccurred('light');
-  }
-}
-
-function updateCartUI() {
-  let totalCount = 0;
-  let totalPrice = 0;
-  
-  // Считаем общую сумму
-  for (const productId in cart) {
-    const quantity = cart[productId];
-    const product = findProduct(productId);
-    
-    if (product) {
-      totalCount += quantity;
-      totalPrice += product.price * quantity;
+// Переключение избранного
+function toggleFavorite(id) {
+    const item = menuData[currentCategory].find(p => p.id === id);
+    if (item) {
+        item.isFavorite = !item.isFavorite;
+        renderMenu();
+        
+        // Вибрация
+        if (tg.HapticFeedback) {
+            tg.HapticFeedback.impactOccurred('light');
+        }
     }
-  }
-  
-  // Обновляем UI
-  cartCountEl.textContent = `${totalCount} ${getCountWord(totalCount)}`;
-  cartTotalEl.textContent = `${totalPrice} ₽`;
-  
-  // Показываем/скрываем панель корзины
-  if (totalCount > 0) {
-    cartPanel.style.display = 'block';
-    checkoutBtn.disabled = false;
-    if (tg.MainButton) tg.MainButton.show();
-  } else {
-    cartPanel.style.display = 'none';
-    checkoutBtn.disabled = true;
-    if (tg.MainButton) tg.MainButton.hide();
-  }
 }
 
-function findProduct(productId) {
-  for (const category in menuData) {
-    const product = menuData[category].find(p => p.id == productId);
-    if (product) return product;
-  }
-  return null;
-}
-
-function getCountWord(count) {
-  if (count === 1) return 'позиция';
-  if (count >= 2 && count <= 4) return 'позиции';
-  return 'позиций';
-}
-
-// ===== ОТПРАВКА ЗАКАЗА =====
-function submitOrder() {
-  const address = addressInput.value.trim();
-  
-  // Валидация
-  if (deliveryMode === 'delivery' && !address) {
-    tg.showAlert('Пожалуйста, укажите адрес доставки');
-    addressInput.focus();
-    return;
-  }
-  
-  if (Object.keys(cart).length === 0) {
-    tg.showAlert('Ваша корзина пуста');
-    return;
-  }
-  
-  // Формируем данные заказа
-  const orderItems = [];
-  let total = 0;
-  
-  for (const productId in cart) {
-    const product = findProduct(productId);
-    const quantity = cart[productId];
+// Добавление в корзину
+function addToCart(id) {
+    cart[id] = (cart[id] || 0) + 1;
+    updateCartBadge();
     
-    orderItems.push({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      quantity: quantity
-    });
+    // Анимация кнопки
+    const btn = document.querySelector(`[data-id="${id}"] .add-to-cart-btn`);
+    btn.style.transform = 'scale(0.9)';
+    setTimeout(() => {
+        btn.style.transform = 'scale(1)';
+    }, 150);
     
-    total += product.price * quantity;
-  }
-  
-  const orderData = {
-    userId: tg.initDataUnsafe?.user?.id,
-    username: tg.initDataUnsafe?.user?.username,
-    firstName: tg.initDataUnsafe?.user?.first_name,
-    mode: deliveryMode,
-    address: address,
-    items: orderItems,
-    total: total,
-    timestamp: new Date().toISOString()
-  };
-  
-  // Отправляем данные боту
-  tg.sendData(JSON.stringify(orderData));
-  
-  // Закрываем приложение
-  tg.close();
+    // Вибрация
+    if (tg.HapticFeedback) {
+        tg.HapticFeedback.impactOccurred('medium');
+    }
 }
 
-// ===== ОБРАБОТЧИКИ СОБЫТИЙ =====
+// Обновление значка корзины
+function updateCartBadge() {
+    const count = Object.values(cart).reduce((a, b) => a + b, 0);
+    const badge = document.getElementById('cartBadge');
+    badge.textContent = count;
+    badge.style.display = count > 0 ? 'flex' : 'none';
+}
+
+// Обработчики событий
 function setupEventListeners() {
-  // Переключение категорий
-  document.querySelectorAll('.category-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
-      e.target.classList.add('active');
-      currentCategory = e.target.dataset.category;
-      renderMenu();
+    // Переключение категорий
+    document.querySelectorAll('.category-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+            currentCategory = e.currentTarget.dataset.category;
+            renderMenu();
+            
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('light');
+            }
+        });
     });
-  });
-  
-  // Переключение режима доставки/самовывоз
-  document.querySelectorAll('.mode-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
-      e.target.classList.add('active');
-      deliveryMode = e.target.dataset.mode;
-      
-      // Показываем/скрываем поле адреса
-      if (deliveryMode === 'pickup') {
-        addressBlock.style.opacity = '0.5';
-        addressInput.disabled = true;
-      } else {
-        addressBlock.style.opacity = '1';
-        addressInput.disabled = false;
-      }
+    
+    // Переключение Доставка/Самовывоз
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+            
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('light');
+            }
+        });
     });
-  });
-  
-  // Кнопка оформления заказа
-  checkoutBtn.addEventListener('click', submitOrder);
+    
+    // Нижняя навигация
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', (e) => {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+            
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.impactOccurred('light');
+            }
+        });
+    });
+    
+    // Поле адреса
+    const addressInput = document.getElementById('addressInput');
+    addressInput.addEventListener('focus', () => {
+        // Можно открыть нативный выбор адреса Telegram
+    });
 }
 
-// ===== ЗАПУСК ПРИЛОЖЕНИЯ =====
+// Запуск
 init();
+
+// Экспорт функций для глобального доступа
+window.toggleFavorite = toggleFavorite;
+window.addToCart = addToCart;
