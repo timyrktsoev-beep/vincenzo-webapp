@@ -3,139 +3,242 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Vincenzo - Итальянская кухня</title>
+    <title>Vincenzo</title>
     
-    <!-- Telegram WebApp SDK -->
+    <!-- Telegram SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
-    <!-- Итальянские шрифты -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Lato:wght@300;400;700;900&display=swap" rel="stylesheet">
-    
-    <!-- Иконки -->
+    <!-- Шрифты и Иконки -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Шапка -->
-    <header class="header">
-        <div class="header-top">
-            <button class="back-btn"><i class="fas fa-chevron-left"></i></button>
-            <h1 class="logo">VINCENZO</h1>
-            <div class="header-actions">
-                <button class="icon-btn"><i class="fas fa-info-circle"></i></button>
-                <button class="icon-btn"><i class="fas fa-search"></i></button>
-            </div>
-        </div>
-        
-        <!-- Переключатель Доставка/Самовывоз -->
-        <div class="delivery-mode">
-            <button class="mode-btn active" data-mode="delivery">
-                <i class="fas fa-motorcycle"></i> Доставка
-            </button>
-            <button class="mode-btn" data-mode="pickup">
-                <i class="fas fa-shopping-bag"></i> Самовывоз
-            </button>
-        </div>
-        
-        <!-- Адрес -->
-        <div class="address-block">
-            <i class="fas fa-map-marker-alt location-icon"></i>
-            <input type="text" class="address-input" placeholder="Указать свой адрес" id="addressInput">
-        </div>
-        
-        <!-- Предупреждение -->
-        <div class="notice-banner">
-            <i class="fas fa-exclamation-triangle notice-icon"></i>
-            <span class="notice-text">Принимаем заказы с 11:00</span>
+    
+    <!-- ===== HEADER ===== -->
+    <header class="app-header">
+        <button class="nav-btn back-btn" onclick="goBack()" id="backBtn" style="display: none;">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <h1 class="app-title" id="pageTitle">Меню</h1>
+        <div class="header-actions">
+            <button class="icon-btn"><i class="fas fa-search"></i></button>
         </div>
     </header>
 
-    <!-- Категории -->
-    <nav class="categories-nav">
-        <button class="category-btn active" data-category="pizza">
-            <span class="cat-icon">🍕</span>
-            <span>Пицца</span>
-        </button>
-        <button class="category-btn" data-category="rolls">
-            <span class="cat-icon">🍱</span>
-            <span>Роллы</span>
-        </button>
-        <button class="category-btn" data-category="soups">
-            <span class="cat-icon">🍲</span>
-            <span>Супы</span>
-        </button>
-        <button class="category-btn" data-category="salads">
-            <span class="cat-icon">🥗</span>
-            <span>Салаты</span>
-        </button>
-        <button class="category-btn" data-category="pasta">
-            <span class="cat-icon">🍝</span>
-            <span>Паста</span>
-        </button>
-    </nav>
-
-    <!-- Основной контент -->
-    <main class="main-content" id="menuContainer">
-        <!-- Карточка товара -->
-        <div class="product-card">
-            <div class="product-image-wrapper">
-                <img src="https://images.unsplash.com/photo-1574126154517-d1e0d89e7344?w=600" 
-                     alt="Пицца с сыром буррата" 
-                     class="product-image">
-                <button class="favorite-btn">
-                    <i class="far fa-heart"></i>
-                </button>
-                <div class="product-badge">Хит</div>
+    <!-- ===== СТРАНИЦА: ГЛАВНОЕ МЕНЮ ===== -->
+    <section id="page-menu" class="page active">
+        <!-- Баннер -->
+        <div class="hero-banner">
+            <div class="banner-text">
+                <h2>VINCENZO</h2>
+                <p>Настоящая итальянская кухня</p>
             </div>
+        </div>
+
+        <!-- Переключатель -->
+        <div class="mode-switch">
+            <button class="mode-btn active">Доставка</button>
+            <button class="mode-btn">Самовывоз</button>
+        </div>
+
+        <!-- Адрес -->
+        <div class="address-row" onclick="navigateTo('cart')">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>Указать свой адрес</span>
+        </div>
+
+        <!-- Категории (горизонтальный скролл) -->
+        <nav class="categories-scroll">
+            <button class="cat-btn active" onclick="filterMenu('pizza', this)">🍕 Пицца</button>
+            <button class="cat-btn" onclick="filterMenu('rolls', this)"> Роллы</button>
+            <button class="cat-btn" onclick="filterMenu('soups', this)">🍲 Супы</button>
+            <button class="cat-btn" onclick="filterMenu('salads', this)">🥗 Салаты</button>
+            <button class="cat-btn" onclick="filterMenu('pasta', this)"> Паста</button>
+        </nav>
+
+        <!-- Сетка товаров -->
+        <div class="menu-grid" id="menuContainer">
+            <!-- Товары генерируются через JS -->
+        </div>
+    </section>
+
+    <!-- ===== СТРАНИЦА: ДЕТАЛИ ТОВАРА ===== -->
+    <section id="page-product" class="page">
+        <div class="product-detail-img">
+            <img id="detailImg" src="" alt="">
+            <button class="fav-btn-large" onclick="toggleFav(this)">
+                <i class="fas fa-heart"></i>
+            </button>
+        </div>
+        <div class="product-detail-info">
+            <div class="detail-header">
+                <h2 id="detailName">Название</h2>
+                <span class="detail-price" id="detailPrice">0 ₽</span>
+            </div>
+            <p class="detail-weight" id="detailWeight">0 г</p>
+            <p class="detail-desc" id="detailDesc">Описание</p>
+
+            <h3 class="options-title">Общие</h3>
+            <p class="options-limit">Максимум: 10</p>
             
-            <div class="product-info">
-                <div class="product-header">
-                    <h3 class="product-name">Пицца с сыром буррата</h3>
-                    <span class="product-weight">650 г</span>
+            <div class="options-list" id="optionsList">
+                <!-- Опции генерируются JS -->
+            </div>
+        </div>
+        
+        <div class="sticky-bottom">
+            <div class="qty-control">
+                <button onclick="changeQty(-1)">−</button>
+                <span id="qtyVal">1</span>
+                <button onclick="changeQty(1)">+</button>
+            </div>
+            <button class="add-cart-btn" onclick="addToCartFromDetail()">
+                В корзину <span id="cartBtnPrice">0 ₽</span>
+            </button>
+        </div>
+    </section>
+
+    <!-- ===== СТРАНИЦА: ПРОФИЛЬ ===== -->
+    <section id="page-profile" class="page">
+        <div class="profile-card">
+            <div class="avatar-placeholder"><i class="fas fa-user"></i></div>
+            <div class="profile-info">
+                <div class="phone-edit">
+                    <span id="userPhone">+7 (988) 831-47-51</span>
+                    <i class="fas fa-pen"></i>
                 </div>
-                
-                <p class="product-description">
-                    Томатный соус, сыр моцарелла, сыр буррата, помидоры, соус песто, руккола
-                </p>
-                
-                <div class="product-footer">
-                    <div class="product-price-block">
-                        <span class="product-price">850 ₽</span>
-                        <span class="product-weight-small">660 г</span>
-                    </div>
-                    <button class="add-to-cart-btn">
-                        <i class="fas fa-plus"></i>
-                    </button>
+                <p class="profile-subtitle">Заполните профиль, чтобы оформлять заказы быстрее!</p>
+            </div>
+        </div>
+
+        <div class="settings-card">
+            <div class="setting-row">
+                <div class="setting-text">
+                    <h4>Включи уведомления</h4>
+                    <p>Моментально узнавай, где твой заказ</p>
+                </div>
+                <label class="toggle">
+                    <input type="checkbox" checked>
+                    <span class="slider round"></span>
+                </label>
+            </div>
+        </div>
+
+        <div class="loyalty-card">
+            <div class="loyalty-header">
+                <div>
+                    <h4>Start <i class="fas fa-info-circle"></i></h4>
+                    <p>Ваш уровень кэшбэка</p>
+                </div>
+                <div class="loyalty-balance">
+                    <span class="points">0</span>
+                    <small>Баланс баллов<br>1 бонус = 1 ₽</small>
                 </div>
             </div>
         </div>
-    </main>
 
-    <!-- Нижняя навигация -->
+        <div class="menu-list">
+            <div class="menu-item" onclick="navigateTo('favorites')">
+                <span>Любимые</span>
+                <i class="far fa-heart"></i>
+            </div>
+            <div class="menu-item" onclick="navigateTo('qr')">
+                <span>Показать qr-код</span>
+                <i class="fas fa-qrcode"></i>
+            </div>
+            <div class="menu-item">
+                <span>История заказов</span>
+                <i class="fas fa-receipt"></i>
+            </div>
+            <div class="menu-item">
+                <span>Начисления баллов</span>
+                <i class="fas fa-coins"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== СТРАНИЦА: QR КОД ===== -->
+    <section id="page-qr" class="page">
+        <div class="qr-container">
+            <h2 class="qr-title">Покажите этот код<br>во время оплаты<br>официанту</h2>
+            <div class="qr-code-box">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=79888314751" alt="QR">
+            </div>
+            <p class="qr-number">79888314751</p>
+        </div>
+    </section>
+
+    <!-- ===== СТРАНИЦА: ЛЮБИМЫЕ ===== -->
+    <section id="page-favorites" class="page">
+        <div class="favorites-list" id="favoritesContainer">
+            <!-- Генерируется JS -->
+        </div>
+        <div id="emptyFav" class="empty-state" style="display:none;">
+            <i class="far fa-heart"></i>
+            <p>У вас пока нет любимых блюд</p>
+        </div>
+    </section>
+
+    <!-- ===== СТРАНИЦА: КОРЗИНА ===== -->
+    <section id="page-cart" class="page">
+        <div class="cart-header">
+            <div class="mode-switch">
+                <button class="mode-btn active">Доставка</button>
+                <button class="mode-btn">Самовывоз</button>
+            </div>
+            <div class="address-display">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>Владикавказ, ул. Революц...</span>
+            </div>
+        </div>
+
+        <div class="cart-items" id="cartItemsContainer">
+            <!-- Товары в корзине -->
+        </div>
+
+        <div class="promo-block">
+            <input type="text" placeholder="Промокод">
+            <button>Применить</button>
+        </div>
+
+        <div class="cart-summary">
+            <div class="summary-row">
+                <span>Товары в заказе <small id="cartCount">0 шт.</small></span>
+                <span id="cartSum">0 ₽</span>
+            </div>
+            <div class="summary-row total">
+                <span>Итого</span>
+                <span id="cartTotal">0 ₽</span>
+            </div>
+        </div>
+
+        <button class="checkout-btn" onclick="checkout()">Продолжить оформление</button>
+    </section>
+
+    <!-- ===== НИЖНЯЯ НАВИГАЦИЯ ===== -->
     <nav class="bottom-nav">
-        <button class="nav-item active" data-page="menu">
-            <i class="fas fa-th-large nav-icon"></i>
-            <span class="nav-text">Меню</span>
+        <button class="nav-item active" onclick="navigateTo('menu')">
+            <i class="fas fa-th-large"></i>
+            <span>Меню</span>
         </button>
-        <button class="nav-item" data-page="profile">
-            <i class="fas fa-user nav-icon"></i>
-            <span class="nav-text">Профиль</span>
+        <button class="nav-item" onclick="navigateTo('profile')">
+            <i class="fas fa-user"></i>
+            <span>Профиль</span>
         </button>
-        <button class="nav-item" data-page="qr">
-            <i class="fas fa-qrcode nav-icon"></i>
-            <span class="nav-text">Qr-код</span>
+        <button class="nav-item" onclick="navigateTo('qr')">
+            <i class="fas fa-qrcode"></i>
+            <span>Qr-код</span>
         </button>
-        <button class="nav-item" data-page="favorites">
-            <i class="fas fa-heart nav-icon"></i>
-            <span class="nav-text">Любимые</span>
+        <button class="nav-item" onclick="navigateTo('favorites')">
+            <i class="fas fa-heart"></i>
+            <span>Любимые</span>
         </button>
-        <button class="nav-item" data-page="cart">
-            <i class="fas fa-shopping-bag nav-icon"></i>
-            <span class="nav-text">Корзина</span>
-            <span class="cart-badge" id="cartBadge">0</span>
+        <button class="nav-item" onclick="navigateTo('cart')">
+            <i class="fas fa-shopping-bag"></i>
+            <span>Корзина</span>
+            <span class="cart-badge" id="navBadge">0</span>
         </button>
     </nav>
 
