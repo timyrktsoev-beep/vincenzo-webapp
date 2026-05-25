@@ -1,76 +1,287 @@
-<!-- Основной контент (меню) -->
-<main class="main-content page active" id="page-menu">
-    <div id="menuContainer"></div>
-</main>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Vincenzo - Итальянская кухня</title>
+    
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    
+    <!-- Шрифты -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Иконки -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- ГЛАВНАЯ СТРАНИЦА -->
+    <div class="page active" id="page-menu">
+        <!-- Шапка -->
+        <header class="header">
+            <div class="header-top">
+                <button class="back-btn"><i class="fas fa-chevron-left"></i></button>
+                <h1 class="logo">VINCENZO</h1>
+                <div class="header-actions">
+                    <button class="icon-btn"><i class="fas fa-info-circle"></i></button>
+                    <button class="icon-btn"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+            
+            <!-- Переключатель Доставка/Самовывоз -->
+            <div class="delivery-mode">
+                <button class="mode-btn active" data-mode="delivery">Доставка</button>
+                <button class="mode-btn" data-mode="pickup">Самовывоз</button>
+            </div>
+            
+            <!-- Адрес -->
+            <div class="address-block" id="addressBlock">
+                <i class="fas fa-map-marker-alt location-icon"></i>
+                <input type="text" class="address-input" placeholder="Указать свой адрес" id="addressInput">
+            </div>
+            
+            <!-- Предупреждение -->
+            <div class="notice-banner">
+                <i class="fas fa-exclamation-triangle notice-icon"></i>
+                <span class="notice-text">Принимаем заказы с 11:00</span>
+            </div>
+        </header>
 
-<!-- Страница Профиль -->
-<main class="main-content page" id="page-profile">
-    <div class="profile-header">
-        <div class="profile-avatar">А</div>
-        <div class="profile-info">
-            <h3>Александр</h3>
-            <div class="profile-phone">+7 (988) 831-47-51</div>
-        </div>
+        <!-- Категории -->
+        <nav class="categories-nav">
+            <button class="category-btn active" data-category="pizza">Пицца</button>
+            <button class="category-btn" data-category="rolls">Роллы</button>
+            <button class="category-btn" data-category="soups">Супы</button>
+            <button class="category-btn" data-category="salads">Салаты</button>
+            <button class="category-btn" data-category="pasta">Горячее</button>
+        </nav>
+
+        <!-- Меню -->
+        <main class="main-content" id="menuContainer">
+            <!-- Товары будут здесь -->
+        </main>
     </div>
 
-    <div class="profile-stats">
-        <div class="stat-card">
-            <div class="stat-value">Start</div>
-            <div class="stat-label">Уровень кэшбэка</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-value">0 ₽</div>
-            <div class="stat-label">Бонусы</div>
-        </div>
+    <!-- СТРАНИЦА ПРОФИЛЬ -->
+    <div class="page" id="page-profile">
+        <header class="header">
+            <div class="header-top">
+                <button class="back-btn" onclick="navigateTo('menu')"><i class="fas fa-chevron-left"></i></button>
+                <h1 class="logo">VINCENZO</h1>
+                <div class="header-actions">
+                    <button class="icon-btn"><i class="fas fa-info-circle"></i></button>
+                    <button class="icon-btn"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+        </header>
+
+        <main class="profile-content">
+            <!-- Профиль пользователя -->
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="profile-info">
+                    <div class="profile-phone">+7 (988) 831-47-51</div>
+                    <div class="profile-subtitle">Заполните профиль, чтобы оформлять заказы быстрее!</div>
+                </div>
+                <button class="edit-profile-btn">
+                    <i class="fas fa-pencil-alt"></i>
+                </button>
+            </div>
+
+            <!-- Уведомления -->
+            <div class="profile-section notifications-section">
+                <div class="notifications-text">
+                    <div class="notifications-title">Включи уведомления</div>
+                    <div class="notifications-desc">Моментально узнавай, где твой заказ, и лови персональные скидки!</div>
+                </div>
+                <div class="toggle-switch active" id="notifToggle" onclick="toggleNotifications(this)">
+                    <div class="toggle-circle"></div>
+                </div>
+                <div class="lightning-effects">
+                    <i class="fas fa-bolt"></i>
+                    <i class="fas fa-bolt"></i>
+                    <i class="fas fa-bolt"></i>
+                </div>
+            </div>
+
+            <!-- Уровень кэшбэка -->
+            <div class="cashback-card">
+                <div class="cashback-left">
+                    <div class="cashback-level">
+                        <span class="level-name">Start</span>
+                        <i class="fas fa-info-circle level-info"></i>
+                    </div>
+                    <div class="cashback-label">Ваш уровень кэшбэка</div>
+                </div>
+                <div class="cashback-right">
+                    <div class="balance-points">
+                        <span class="balance-value">0</span>
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <div class="balance-label">Баланс баллов</div>
+                    <div class="balance-rate">1 бонус = 1 ₽</div>
+                </div>
+            </div>
+
+            <!-- Меню профиля -->
+            <div class="profile-menu">
+                <button class="profile-menu-item" onclick="navigateTo('favorites')">
+                    <span>Любимые</span>
+                    <i class="far fa-heart"></i>
+                </button>
+                <button class="profile-menu-item">
+                    <span>Показать qr-код</span>
+                    <i class="fas fa-qrcode"></i>
+                </button>
+                <button class="profile-menu-item">
+                    <span>История заказов</span>
+                    <i class="fas fa-receipt"></i>
+                </button>
+                <button class="profile-menu-item">
+                    <span>Начисления баллов</span>
+                    <i class="fas fa-percent"></i>
+                </button>
+            </div>
+        </main>
     </div>
 
-    <div class="profile-menu">
-        <button class="profile-item" onclick="navigateTo('favorites')">
-            <i class="fas fa-heart"></i> Любимые
-        </button>
-        <button class="profile-item">
-            <i class="fas fa-qrcode"></i> QR-код
-        </button>
-        <button class="profile-item">
-            <i class="fas fa-clock"></i> История заказов
-        </button>
-        <button class="profile-item">
-            <i class="fas fa-gift"></i> Начисления баллов
-        </button>
+    <!-- СТРАНИЦА КОРЗИНА -->
+    <div class="page" id="page-cart">
+        <header class="header">
+            <div class="header-top">
+                <button class="back-btn" onclick="navigateTo('menu')"><i class="fas fa-chevron-left"></i></button>
+                <h1 class="logo">VINCENZO</h1>
+                <div class="header-actions">
+                    <button class="icon-btn"><i class="fas fa-info-circle"></i></button>
+                    <button class="icon-btn"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+        </header>
+
+        <main class="cart-content">
+            <!-- Предупреждение с кнопкой закрыть -->
+            <div class="notice-banner-with-close">
+                <div class="notice-banner">
+                    <i class="fas fa-exclamation-triangle notice-icon"></i>
+                    <span class="notice-text">Принимаем заказы с 11:00</span>
+                </div>
+                <button class="close-cart-btn" onclick="navigateTo('menu')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Переключатель Доставка/Самовывоз -->
+            <div class="delivery-mode">
+                <button class="mode-btn" data-mode="delivery">Доставка</button>
+                <button class="mode-btn active" data-mode="pickup">Самовывоз</button>
+            </div>
+
+            <!-- Адрес -->
+            <div class="address-block cart-address">
+                <i class="fas fa-map-marker-alt location-icon"></i>
+                <span class="address-text">Владикавказ, ул.Революц...</span>
+            </div>
+
+            <!-- Товары в корзине -->
+            <div class="cart-items" id="cartItemsContainer">
+                <!-- Товары будут здесь -->
+            </div>
+
+            <!-- Промокод -->
+            <div class="promo-section">
+                <input type="text" class="promo-input" placeholder="Промокод">
+            </div>
+
+            <!-- Итого -->
+            <div class="cart-summary">
+                <div class="summary-row">
+                    <span class="summary-label">Товары в заказе <span class="items-count">2 шт.</span></span>
+                    <span class="summary-value" id="cartItemsTotal">1140 ₽</span>
+                </div>
+                <div class="summary-row total-row">
+                    <span class="summary-label">Итого</span>
+                    <span class="summary-value total-value" id="cartTotal">1140 ₽</span>
+                </div>
+            </div>
+
+            <!-- Кнопка оформления -->
+            <button class="checkout-btn" onclick="checkout()">Продолжить оформление</button>
+        </main>
     </div>
 
-    <div class="profile-menu" style="margin-top: 16px;">
-        <div class="toggle-row">
-            <span>Уведомления</span>
-            <div class="toggle-switch active" id="notifToggle" onclick="this.classList.toggle('active')"></div>
-        </div>
-        <button class="profile-item" style="color: var(--primary);">
-            <i class="fas fa-sign-out-alt"></i> Выйти
+    <!-- СТРАНИЦА ИЗБРАННОЕ -->
+    <div class="page" id="page-favorites">
+        <header class="header">
+            <div class="header-top">
+                <button class="back-btn" onclick="navigateTo('menu')"><i class="fas fa-chevron-left"></i></button>
+                <h1 class="logo">VINCENZO</h1>
+                <div class="header-actions">
+                    <button class="icon-btn"><i class="fas fa-info-circle"></i></button>
+                    <button class="icon-btn"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+        </header>
+
+        <main class="favorites-content">
+            <h2 class="favorites-title">Любимые блюда</h2>
+            <div id="favoritesContainer">
+                <!-- Избранные товары будут здесь -->
+            </div>
+        </main>
+    </div>
+
+    <!-- СТРАНИЦА QR-КОД -->
+    <div class="page" id="page-qr">
+        <header class="header">
+            <div class="header-top">
+                <button class="back-btn" onclick="navigateTo('menu')"><i class="fas fa-chevron-left"></i></button>
+                <h1 class="logo">VINCENZO</h1>
+                <div class="header-actions">
+                    <button class="icon-btn"><i class="fas fa-info-circle"></i></button>
+                    <button class="icon-btn"><i class="fas fa-search"></i></button>
+                </div>
+            </div>
+        </header>
+
+        <main class="qr-content">
+            <div class="qr-placeholder">
+                <i class="fas fa-qrcode"></i>
+                <p>QR-код будет здесь</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Нижняя навигация -->
+    <nav class="bottom-nav">
+        <button class="nav-item active" onclick="navigateTo('menu')" data-page="menu">
+            <i class="fas fa-th-list nav-icon"></i>
+            <span class="nav-text">Меню</span>
         </button>
-    </div>
-</main>
+        <button class="nav-item" onclick="navigateTo('profile')" data-page="profile">
+            <i class="fas fa-user nav-icon"></i>
+            <span class="nav-text">Профиль</span>
+        </button>
+        <button class="nav-item" onclick="navigateTo('qr')" data-page="qr">
+            <i class="fas fa-qrcode nav-icon"></i>
+            <span class="nav-text">QR-код</span>
+        </button>
+        <button class="nav-item" onclick="navigateTo('favorites')" data-page="favorites">
+            <i class="fas fa-heart nav-icon"></i>
+            <span class="nav-text">Любимые</span>
+        </button>
+        <button class="nav-item" onclick="navigateTo('cart')" data-page="cart">
+            <i class="fas fa-shopping-bag nav-icon"></i>
+            <span class="nav-text">Корзина</span>
+            <span class="cart-badge" id="cartBadge">0</span>
+        </button>
+    </nav>
 
-<!-- Страница Любимое -->
-<main class="main-content page" id="page-favorites">
-    <h2 style="margin-bottom: 16px; font-size: 20px;">❤️ Любимые блюда</h2>
-    <div id="favoritesEmpty" class="favorites-empty">
-        <i class="far fa-heart"></i>
-        <p>Здесь будут ваши избранные блюда</p>
-        <p style="font-size: 13px; margin-top: 8px;">Нажмите ♥ на карточке товара</p>
-    </div>
-    <div id="favoritesGrid" class="favorites-grid"></div>
-</main>
-
-<!-- Страница Корзина (заглушка) -->
-<main class="main-content page" id="page-cart">
-    <h2 style="margin-bottom: 16px;">🛒 Корзина</h2>
-    <div id="cartContainer"></div>
-</main>
-
-<!-- Страница Детали товара -->
-<main class="main-content page" id="page-product">
-    <button id="backBtn" onclick="goBack()" style="background:none;border:none;font-size:18px;margin-bottom:12px;">
-        <i class="fas fa-chevron-left"></i> Назад
-    </button>
-    <div id="productDetail"></div>
-</main>
+    <script src="app.js"></script>
+</body>
+</html>
