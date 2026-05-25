@@ -1,10 +1,12 @@
 import os
 import sqlite3
+import asyncio
 import logging
-from aiogram import Bot, Dispatcher, executor, types
+import json
+from aiogram import Bot, Dispatcher, types
+from aiogram.filters import Command, F
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 from dotenv import load_dotenv
-import json
 
 # Настройки
 logging.basicConfig(level=logging.INFO)
@@ -18,20 +20,18 @@ if not BOT_TOKEN:
     raise ValueError("Нет токена в .env файле!")
 
 bot = Bot(token=BOT_TOKEN)
-dp = Dispatcher(bot)
+dp = Dispatcher()
 
 # --- Работа с Базой Данных (SQLite) ---
 def init_db():
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
-    # Таблица пользователей
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
             telegram_id INTEGER PRIMARY KEY,
             username TEXT
         )
     ''')
-    # Таблица заказов
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS orders (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -58,11 +58,9 @@ def save_order(telegram_id, total, address, items_json):
     return order_id
 
 # --- Хендлеры (Логика) ---
-
-@dp.message_handler(commands=['start'])
+@dp.message(Command("start"))
 async def cmd_start(message: types.Message):
     markup = InlineKeyboardMarkup(row_width=1)
-    # Кнопка, которая открывает ваше мини-приложение
     webapp_btn = InlineKeyboardButton(
         text="🍕 Открыть меню Vincenzo",
         web_app=WebAppInfo(url=WEBAPP_URL)
@@ -76,9 +74,9 @@ async def cmd_start(message: types.Message):
         parse_mode="Markdown"
     )
 
-@dp.message_handler(content_types=types.ContentType.WEB_APP_DATA)
+# Ловим сообщения с данными из WebApp
+@dp.message(F.web_app_data is not None)
 async def web_app_data_handler(message: types.Message):
-    # Данные пришли из WebApp в виде JSON
     data = json.loads(message.web_app_data.data)
     
     telegram_id = data.get('userId')
@@ -86,24 +84,25 @@ async def web_app_data_handler(message: types.Message):
     address = data.get('address')
     items = data.get('items')
     
-    # Сохраняем в БД
-    # items нужно превратить в строку JSON для записи в БД
     items_str = json.dumps(items, ensure_ascii=False)
     order_id = save_order(telegram_id, total, address, items_str)
     
-    # Формируем красивый ответ
     items_list = "\n".join([f"• {i['name']} x{i['quantity']}" for i in items])
     
     response_text = (
         f"✅ **Заказ #{order_id} принят!**\n\n"
         f"{items_list}\n\n"
         f"💰 Сумма: {total} ₽\n"
-        f" Адрес: {address}"
+        f"📍 Адрес: {address}"
     )
     
     await message.answer(response_text, parse_mode="Markdown")
 
 # --- Запуск ---
+async def main():
+    init_db()  # Создаём таблицы при старте
+    print("🚀 Бот запущен. Жду команды...")
+    await dp.start_polling(bot)
+
 if __name__ == "__main__":
-    init_db() # Создаем таблицы при запуске
-    executor.start_polling(dp, skip_updates=True)
+    asyncio.run(main())
