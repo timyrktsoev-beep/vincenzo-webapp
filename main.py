@@ -3,8 +3,9 @@ import sqlite3
 import asyncio
 import logging
 import json
-from aiogram import Bot, Dispatcher, types
-from aiogram.filters import Command, F
+# ИСПРАВЛЕНИЕ: F импортируется из основного пакета, Command - из filters
+from aiogram import Bot, Dispatcher, types, F
+from aiogram.filters import Command
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 from dotenv import load_dotenv
 
@@ -94,7 +95,7 @@ async def web_app_data_handler(message: types.Message):
 # --- Запуск ---
 async def main():
     init_db()
-    print(" Бот запущен. Жду команды...")
+    print("🚀 Бот запущен. Жду команды...")
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
