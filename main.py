@@ -9,11 +9,11 @@ from database import init_db, async_session
 from models import User, Order, OrderItem
 
 # Вставь сюда токен от @BotFather
-TOKEN = "ТВОЙ_ТОКЕН_ОТ_БОТА"
+TOKEN = "8647862770:AAHodPcg8mavTmwlMf1X65Z_pj3Tt_D0R5s"
 # Ссылка на твой WebApp (заменит на GitHub Pages позже, пока можно локально через ngrok или просто тест)
 # Для теста без хостинга просто нажми кнопку "Запустить" в боте, он откроет заглушку,
 # но чтобы работало полноценно - нужно загрузить файлы на GitHub Pages.
-WEBAPP_URL = "https://твоя_ссылка_на_github_pages" 
+WEBAPP_URL = "https://timyrktsoev-beep.github.io/vincenzo-webapp/" 
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
