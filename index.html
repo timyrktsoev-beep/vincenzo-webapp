@@ -4,33 +4,169 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Vincenzo MiniApp</title>
-  <link rel="stylesheet" href="style.css">
+  <!-- Подключение SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  
+  <style>
+    /* === ИТАЛЬЯНСКИЙ ТЕПЛЫЙ ДИЗАЙН + СБРОС TELEGRAM === */
+    :root {
+      --bg-dark: #24211D;
+      --card-bg: #2F2A24;
+      --text-primary: #F2EBE1;
+      --text-secondary: #A89F91;
+      --beige-accent: #D4B89A;
+      --terracotta: #C65D4A;
+      --olive-green: #6B8E5A;
+      --warning-bg: #F4E8C1;
+      --warning-text: #8A7342;
+      --nav-bg: #1A1714;
+    }
+
+    /* Принудительный сброс стилей браузера и Telegram */
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; outline: none; border: none; }
+    html, body { 
+      background: var(--bg-dark); 
+      color: var(--text-primary); 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+      height: 100%; 
+      overflow-x: hidden; 
+    }
+    
+    /* Убираем стандартные стили кнопок Telegram */
+    button { background: none; color: inherit; font-family: inherit; cursor: pointer; }
+
+    /* === ШАПКА === */
+    .app-header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 12px 16px; position: sticky; top: 0; background: var(--bg-dark); z-index: 100;
+    }
+    .app-title { font-size: 20px; font-weight: 800; letter-spacing: 1.5px; color: #fff; }
+    .icon-btn { font-size: 22px; padding: 8px; opacity: 0.9; }
+
+    /* === ПЕРЕКЛЮЧАТЕЛЬ ДОСТАВКИ === */
+    .delivery-toggle {
+      display: flex; background: #1A1714; border-radius: 14px; padding: 4px; margin: 0 16px 12px;
+    }
+    .toggle-btn {
+      flex: 1; padding: 12px; border-radius: 12px; font-weight: 600; font-size: 15px;
+      transition: 0.2s; color: var(--text-secondary);
+    }
+    .toggle-btn.active { 
+      background: var(--card-bg); color: var(--text-primary); 
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    /* === АДРЕС И ПРЕДУПРЕЖДЕНИЕ === */
+    .address-bar {
+      margin: 0 16px 12px; font-size: 14px; color: var(--text-primary); display: flex; align-items: center; gap: 8px;
+      background: var(--card-bg); padding: 10px 14px; border-radius: 10px;
+    }
+    .warning-banner {
+      background: var(--warning-bg); color: var(--warning-text); padding: 12px 16px;
+      border-radius: 12px; margin: 0 16px 16px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 8px;
+    }
+
+    /* === КАТЕГОРИИ (Скролл) === */
+    .category-scroll {
+      display: flex; gap: 10px; overflow-x: auto; padding: 0 16px 16px;
+      scrollbar-width: none; -ms-overflow-style: none;
+    }
+    .category-scroll::-webkit-scrollbar { display: none; }
+    .cat-pill {
+      padding: 10px 18px; background: var(--card-bg); border-radius: 24px; white-space: nowrap;
+      font-size: 15px; font-weight: 500; color: var(--text-secondary); transition: 0.2s;
+    }
+    .cat-pill.active { background: var(--beige-accent); color: #1A1714; font-weight: 700; }
+
+    /* === КАРТОЧКИ ТОВАРОВ === */
+    .products-grid { padding: 0 16px 100px; } /* Отступ снизу для навигации */
+    .product-card {
+      background: var(--card-bg); border-radius: 20px; overflow: hidden; margin-bottom: 16px;
+      position: relative; box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+    }
+    .product-img { width: 100%; height: 180px; object-fit: cover; background: #3a352e; }
+    .fav-btn {
+      position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+      color: #fff; font-size: 20px; width: 36px; height: 36px; border-radius: 50%; 
+      display: flex; align-items: center; justify-content: center;
+    }
+    .fav-btn.active { color: var(--terracotta); background: rgba(255,255,255,0.2); }
+    .product-info { padding: 14px; }
+    .product-title { font-size: 17px; font-weight: 700; margin-bottom: 6px; line-height: 1.2; }
+    .product-weight { font-size: 13px; color: var(--text-secondary); font-weight: 400; }
+    .product-desc { font-size: 13px; color: var(--text-secondary); margin: 8px 0 12px; line-height: 1.4; }
+    .product-footer { display: flex; justify-content: space-between; align-items: center; }
+    .price { font-size: 18px; font-weight: 700; color: var(--text-primary); }
+    .add-btn {
+      background: var(--beige-accent); color: #1A1714; width: 40px; height: 40px;
+      border-radius: 12px; font-size: 24px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+    }
+
+    /* === СТРАНИЦЫ (СКРЫТИЕ/ПОКАЗ) === */
+    .page { display: none; animation: fadeIn 0.2s; }
+    .page.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* === ПРОФИЛЬ === */
+    .profile-card { background: var(--card-bg); margin: 16px; padding: 16px; border-radius: 16px; display: flex; align-items: center; gap: 14px; }
+    .avatar { width: 60px; height: 60px; background: #3a352e; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 30px; }
+    .profile-info h2 { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+    .hint { font-size: 12px; color: var(--text-secondary); }
+    .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #444; transition: .4s; border-radius: 28px; }
+    .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+    input:checked + .slider { background-color: var(--terracotta); }
+    input:checked + .slider:before { transform: translateX(22px); }
+    .loyalty-card { background: linear-gradient(135deg, #3a352e, #2a2520); margin: 0 16px 16px; padding: 18px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.05); }
+    .menu-list { margin: 0 16px; }
+    .list-item { width: 100%; text-align: left; padding: 16px 0; font-size: 16px; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between; }
+
+    /* === QR === */
+    .qr-overlay { text-align: center; padding: 40px 20px; }
+    .qr-code-box { width: 220px; height: 220px; background: #fff; margin: 20px auto; border-radius: 20px; display: flex; align-items: center; justify-content: center; color: #000; font-weight: 700; font-size: 24px; }
+    
+    /* === НИЖНЯЯ НАВИГАЦИЯ === */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0; background: var(--nav-bg);
+      display: flex; justify-content: space-around; padding: 10px 0 24px;
+      border-top: 1px solid rgba(255,255,255,0.05); z-index: 100;
+    }
+    .nav-btn { background: none; color: var(--text-secondary); display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 11px; }
+    .nav-btn.active { color: var(--beige-accent); }
+    .nav-icon { font-size: 22px; }
+    
+    /* === ПЛАВАЮЩАЯ КОРЗИНА === */
+    #floating-cart {
+      position: fixed; bottom: 80px; left: 16px; right: 16px; background: var(--olive-green);
+      color: #fff; padding: 14px 16px; border-radius: 14px; display: flex; justify-content: space-between;
+      align-items: center; font-weight: 600; z-index: 90; box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+    }
+    #floating-cart.hidden { display: none; }
+    #floating-cart button { background: rgba(255,255,255,0.2); padding: 8px 14px; border-radius: 10px; font-size: 14px; font-weight: 600; }
+  </style>
 </head>
 <body>
-  <!-- Верхняя шапка -->
+
+  <!-- ВЕРХНЯЯ ШАПКА -->
   <header class="app-header">
-    <button class="icon-btn back-btn">‹</button>
     <h1 class="app-title">VINCENZO</h1>
     <div class="header-actions">
-      <button class="icon-btn">ℹ</button>
+      <button class="icon-btn">ℹ️</button>
       <button class="icon-btn">🔍</button>
     </div>
   </header>
 
-  <!-- Основной контент -->
   <main id="main-content">
     
-    <!-- 📄 Вкладка МЕНЮ -->
+    <!-- 📄 СТРАНИЦА МЕНЮ -->
     <section id="menu" class="page active">
       <div class="delivery-toggle">
         <button class="toggle-btn" data-mode="delivery">Доставка</button>
         <button class="toggle-btn active" data-mode="pickup">Самовывоз</button>
       </div>
-      <div class="address-bar">
-        <span class="geo-icon"></span>
-        <span id="address-text">Владикавказ, ул.Революции 61</span>
-      </div>
+      
+      <div class="address-bar">📍 <span id="address-text">Владикавказ, ул.Революции 61</span></div>
       <div class="warning-banner">⚠️ Принимаем заказы с 11:00</div>
       
       <div class="category-scroll" id="category-tabs">
@@ -41,76 +177,72 @@
         <button class="cat-pill" data-cat="salads">Салаты</button>
       </div>
 
-      <div id="products-list" class="products-grid"></div>
+      <div id="products-list" class="products-grid">
+        <!-- Сюда JS вставит карточки -->
+      </div>
     </section>
 
-    <!-- 👤 Вкладка ПРОФИЛЬ -->
+    <!-- 👤 СТРАНИЦА ПРОФИЛЬ -->
     <section id="profile" class="page">
       <div class="profile-card">
-        <div class="avatar">👤</div>
+        <div class="avatar"></div>
         <div class="profile-info">
           <h2 id="user-phone">+7 (___) ___-__-__</h2>
           <p class="hint">Заполните профиль, чтобы оформлять заказы быстрее!</p>
-          <button class="edit-btn">️</button>
         </div>
       </div>
 
-      <div class="settings-card">
-        <div class="setting-row">
-          <div>
-            <h3>Включи уведомления</h3>
-            <p class="hint">Моментально узнавай, где твой заказ, и лови персональные скидки!</p>
-          </div>
-          <label class="switch">
-            <input type="checkbox" checked>
-            <span class="slider"></span>
-          </label>
+      <div class="profile-card" style="margin-top:0">
+        <div style="flex:1">
+          <h3 style="margin-bottom:4px">Включи уведомления</h3>
+          <p class="hint">Лови персональные скидки и следи за заказом!</p>
         </div>
+        <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
       </div>
 
       <div class="loyalty-card">
-        <div class="loyalty-header">
-          <h3>Start <span class="info-icon">ⓘ</span></h3>
-          <div class="loyalty-balance">0 ₽</div>
+        <div style="display:flex; justify-content:space-between; align-items:center">
+          <h3>Start ℹ️</h3>
+          <div style="font-size:22px; font-weight:700">0 ₽</div>
         </div>
-        <p class="loyalty-sub">Ваш уровень кэшбэка</p>
-        <p class="loyalty-rule">Баланс баллов • 1 бонус = 1 ₽</p>
+        <p class="hint" style="margin-top:6px">Ваш уровень кэшбэка</p>
+        <p style="font-size:12px; color:var(--beige-accent); margin-top:8px">Баланс баллов • 1 бонус = 1 ₽</p>
       </div>
 
       <div class="menu-list">
-        <button class="list-item" onclick="showPage('favorites')">Любимые <span class="arrow">♡</span></button>
-        <button class="list-item" onclick="showPage('qr')">Показать qr-код <span class="arrow"></span></button>
-        <button class="list-item">История заказов <span class="arrow">📄</span></button>
+        <button class="list-item" onclick="showPage('favorites')">Любимые <span>♡</span></button>
+        <button class="list-item" onclick="showPage('qr')">Показать qr-код <span></span></button>
+        <button class="list-item">История заказов <span>📄</span></button>
       </div>
     </section>
 
-    <!-- 📱 Вкладка QR -->
+    <!-- 📱 СТРАНИЦА QR -->
     <section id="qr" class="page">
       <div class="qr-overlay">
-        <h2>Покажите этот код<br>во время оплаты<br>официанту</h2>
+        <h2 style="line-height:1.3; margin-bottom:20px">Покажите этот код<br>во время оплаты<br>официанту</h2>
         <div class="qr-code-box" id="qr-placeholder">QR</div>
-        <p class="qr-phone" id="qr-phone-display">79888314751</p>
-        <button class="close-qr-btn" onclick="showPage('menu')">Закрыть</button>
+        <p style="color:var(--beige-accent); font-size:18px; margin-top:16px" id="qr-phone-display">79888314751</p>
+        <button class="toggle-btn" style="margin-top:30px; width:100%" onclick="showPage('menu')">Закрыть</button>
       </div>
     </section>
 
-    <!-- ❤️ Вкладка ЛЮБИМЫЕ -->
+    <!-- ❤️ СТРАНИЦА ЛЮБИМЫЕ -->
     <section id="favorites" class="page">
-      <h2 class="section-title">Избранное</h2>
+      <h2 style="padding:16px; font-size:20px">Избранное</h2>
       <div id="favorites-list" class="products-grid"></div>
-      <p id="no-fav-msg" class="empty-msg">Добавьте блюда в избранное, нажав ♡</p>
+      <p id="no-fav-msg" style="text-align:center; color:var(--text-secondary); margin-top:40px; display:none">Добавьте блюда в избранное, нажав ♡</p>
     </section>
 
   </main>
 
-  <!-- Плавающая корзина -->
+  <!-- ПЛАВАЮЩАЯ КОРЗИНА -->
   <div id="floating-cart" class="hidden">
     <span id="cart-count">0 шт</span>
-    <button onclick="showPage('cart-modal')">Перейти в корзину</button>
+    <button onclick="checkout()">Оформить</button>
     <span id="cart-sum">0 ₽</span>
   </div>
 
-  <!-- Нижняя навигация -->
+  <!-- НИЖНЯЯ НАВИГАЦИЯ -->
   <nav class="bottom-nav">
     <button class="nav-btn active" data-page="menu">
       <span class="nav-icon">☰</span>
@@ -130,11 +262,136 @@
     </button>
     <button class="nav-btn" id="nav-cart-btn">
       <span class="nav-icon">🛒</span>
-      <span class="badge" id="cart-badge">0</span>
       <span id="nav-cart-sum">0 ₽</span>
     </button>
   </nav>
 
-  <script src="app.js"></script>
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+    tg.ready();
+
+    // Данные (в реальном приложении придут с сервера)
+    const products = [
+      { id: 1, name: "Пицца с сыром буррата", weight: "650 г", desc: "Томатный соус, сыр моцарелла, сыр буррата, помидоры, соус песто, руккола", price: 850, cat: "pizza", img: "https://via.placeholder.com/400x200/3a352e/fff?text=Burrata" },
+      { id: 2, name: "Пицца Цезарь с курицей", weight: "580 г", desc: "Соус цезарь, сыр пармезан, сыр моцарелла, куриное филе", price: 650, cat: "pizza", img: "https://via.placeholder.com/400x200/3a352e/fff?text=Caesar" },
+      { id: 3, name: "Ролл жареный с креветкой", weight: "260 г", desc: "Тигровая креветка, икра тобико, майонез, темпура", price: 440, cat: "rolls", img: "https://via.placeholder.com/400x200/3a352e/fff?text=Rolls" }
+    ];
+
+    let cart = [];
+    let favorites = new Set();
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderProducts('all');
+      
+      // Настройка данных пользователя из Telegram
+      const user = tg.initDataUnsafe?.user;
+      if (user) {
+        document.getElementById('user-phone').textContent = user.first_name || 'Гость';
+        document.getElementById('qr-phone-display').textContent = user.id || '79888314751';
+      }
+    });
+
+    function renderProducts(category) {
+      const container = document.getElementById('products-list');
+      container.innerHTML = '';
+      const filtered = category === 'all' ? products : products.filter(p => p.cat === category);
+      
+      filtered.forEach(p => {
+        container.innerHTML += `
+          <div class="product-card">
+            <button class="fav-btn ${favorites.has(p.id) ? 'active' : ''}" onclick="toggleFav(${p.id}, this)">♡</button>
+            <div class="product-img" style="background:url('${p.img}') center/cover"></div>
+            <div class="product-info">
+              <div class="product-title">${p.name} <span class="product-weight">${p.weight}</span></div>
+              <div class="product-desc">${p.desc}</div>
+              <div class="product-footer">
+                <div class="price">${p.price} ₽</div>
+                <button class="add-btn" onclick="addToCart(${p.id})">+</button>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function addToCart(id) {
+      const item = products.find(p => p.id === id);
+      const existing = cart.find(c => c.id === id);
+      if (existing) existing.qty++; else cart.push({ ...item, qty: 1 });
+      tg.HapticFeedback.impactOccurred('light');
+      updateCartUI();
+    }
+
+    function updateCartUI() {
+      const count = cart.reduce((s, i) => s + i.qty, 0);
+      const sum = cart.reduce((s, i) => s + i.price * i.qty, 0);
+      document.getElementById('cart-count').textContent = `${count} шт`;
+      document.getElementById('cart-sum').textContent = `${sum} ₽`;
+      document.getElementById('nav-cart-sum').textContent = `${sum} ₽`;
+      const floating = document.getElementById('floating-cart');
+      cart.length ? floating.classList.remove('hidden') : floating.classList.add('hidden');
+    }
+
+    function toggleFav(id, btn) {
+      if (favorites.has(id)) favorites.delete(id); else favorites.add(id);
+      btn.classList.toggle('active');
+      renderFavorites();
+    }
+
+    function renderFavorites() {
+      const list = document.getElementById('favorites-list');
+      const msg = document.getElementById('no-fav-msg');
+      list.innerHTML = '';
+      if (favorites.size === 0) { msg.style.display = 'block'; return; }
+      msg.style.display = 'none';
+      products.filter(p => favorites.has(p.id)).forEach(p => {
+        list.innerHTML += `
+          <div class="product-card">
+             <button class="fav-btn active" onclick="toggleFav(${p.id}, this)">♡</button>
+             <div class="product-img" style="background:url('${p.img}') center/cover"></div>
+             <div class="product-info">
+              <div class="product-title">${p.name} <span class="product-weight">${p.weight}</span></div>
+              <div class="product-footer">
+                <div class="price">${p.price} ₽</div>
+                <button class="add-btn" onclick="addToCart(${p.id})">+</button>
+              </div>
+            </div>
+          </div>`;
+      });
+    }
+
+    function showPage(pageId) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById(pageId).classList.add('active');
+      const navBtn = document.querySelector(`.nav-btn[data-page="${pageId}"]`);
+      if (navBtn) navBtn.classList.add('active');
+      if (pageId === 'favorites') renderFavorites();
+    }
+
+    // Обработчики кликов
+    document.querySelectorAll('.nav-btn').forEach(btn => btn.addEventListener('click', () => showPage(btn.dataset.page)));
+    document.querySelectorAll('.cat-pill').forEach(btn => btn.addEventListener('click', () => {
+      document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderProducts(btn.dataset.cat);
+    }));
+    document.querySelectorAll('.toggle-btn[data-mode]').forEach(btn => btn.addEventListener('click', () => {
+      document.querySelectorAll('.toggle-btn[data-mode]').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }));
+
+    function checkout() {
+      if (cart.length === 0) return;
+      const orderData = {
+        items: cart,
+        total: cart.reduce((s, i) => s + i.price * i.qty, 0),
+        type: document.querySelector('.toggle-btn.active').dataset.mode,
+        address: document.getElementById('address-text').textContent
+      };
+      tg.sendData(JSON.stringify(orderData));
+    }
+  </script>
 </body>
 </html>
