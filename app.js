@@ -92,6 +92,22 @@ function toggleFav(id, btn) {
   renderFavorites();
 }
 
+function checkout() {
+  // Собираем данные в объект
+  const orderData = {
+    items: cart,
+    total: cart.reduce((s, i) => s + i.price * i.qty, 0),
+    address: document.getElementById('address-text').textContent,
+    date: new Date().toISOString()
+  };
+
+  // ОТПРАВКА ДАННЫХ БОТУ
+  Telegram.WebApp.sendData(JSON.stringify(orderData));
+  
+  // Опционально: закрыть окно после заказа
+  // Telegram.WebApp.close(); 
+}
+
 function renderFavorites() {
   const list = document.getElementById('favorites-list');
   const msg = document.getElementById('no-fav-msg');
