@@ -92,20 +92,36 @@ function toggleFav(id, btn) {
   renderFavorites();
 }
 
+// Найди функцию checkout() и замени на эту:
 function checkout() {
-  // Собираем данные в объект
+  if (cart.length === 0) {
+    tg.showAlert('Корзина пуста! Добавьте блюда.');
+    return;
+  }
+
+  const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const address = document.getElementById('address-text').textContent;
+  
+  // Формируем строгую структуру, которую ждёт бот
   const orderData = {
-    items: cart,
-    total: cart.reduce((s, i) => s + i.price * i.qty, 0),
-    address: document.getElementById('address-text').textContent,
-    date: new Date().toISOString()
+    items: cart.map(i => ({ name: i.name, price: i.price, qty: i.qty })),
+    total: total,
+    address: address,
+    timestamp: new Date().toISOString()
   };
 
-  // ОТПРАВКА ДАННЫХ БОТУ
-  Telegram.WebApp.sendData(JSON.stringify(orderData));
-  
-  // Опционально: закрыть окно после заказа
-  // Telegram.WebApp.close(); 
+  try {
+    console.log('📤 Отправляю заказ:', JSON.stringify(orderData));
+    tg.showConfirm(`Оформить заказ на ${total}₽?`, (confirmed) => {
+      if (confirmed) {
+        tg.sendData(JSON.stringify(orderData));
+        // WebApp закроется автоматически, заказ улетит в бота
+      }
+    });
+  } catch (e) {
+    tg.showAlert('Ошибка оформления: ' + e.message);
+    console.error(e);
+  }
 }
 
 function renderFavorites() {
