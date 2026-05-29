@@ -6,20 +6,21 @@ let products = [];
 let cart = [];
 let favorites = new Set();
 
-// Загрузка меню из JSON (генерируется seed_db.py)
-async function loadMenu() {
+// 📥 Загрузка меню из БД через API
+async function loadProducts() {
   try {
-    const res = await fetch('products.json');
+    const res = await fetch('/api/products');
+    if (!res.ok) throw new Error('Failed to fetch');
     products = await res.json();
     renderProducts('all');
-  } catch (err) {
-    console.error('Ошибка загрузки меню:', err);
-    tg.showAlert('Не удалось загрузить меню. Проверьте подключение.');
+  } catch (e) {
+    console.error("Ошибка загрузки меню:", e);
+    tg.showAlert("Не удалось загрузить меню. Убедитесь, что сервер запущен.");
   }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  loadMenu();
+  loadProducts(); // Загружаем из БД вместо захардкоженного массива
   const user = tg.initDataUnsafe?.user;
   if (user) {
     document.getElementById('user-phone').textContent = user.first_name || 'Гость';
@@ -27,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+// ... (остальной код app.js остаётся БЕЗ ИЗМЕНЕНИЙ: renderProducts, addToCart, checkout и т.д.)
 // Рендер товаров (исправлены поля под models.py)
 function renderProducts(category) {
   const container = document.getElementById('products-list');
