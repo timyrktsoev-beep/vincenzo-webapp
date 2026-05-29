@@ -14,7 +14,8 @@ from aiohttp import web
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
 
-TOKEN = "ТВОЙ_ТОКЕН_ОТ_BOTFATHER"
+TOKEN = "8647862770:AAHodPcg8mavTmwlMf1X65Z_pj3Tt_D0R5s
+
 bot = Bot(token=TOKEN)
 dp = Dispatcher()
 
