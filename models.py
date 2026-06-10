@@ -1,4 +1,4 @@
-from sqlalchemy import String, Float, Integer, DateTime, ForeignKey, Enum
+from sqlalchemy import String, Float, Integer, DateTime, ForeignKey, Enum, Boolean
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from datetime import datetime
 import enum
@@ -21,16 +21,27 @@ class OrderStatus(str, enum.Enum):
 
 class User(Base):
     __tablename__ = "users"
-
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     telegram_id: Mapped[str] = mapped_column(String(50), unique=True, nullable=False, index=True)
     full_name: Mapped[str] = mapped_column(String(100), nullable=True)
     phone: Mapped[str] = mapped_column(String(20), nullable=True)
     role: Mapped[str] = mapped_column(String(20), default=UserRole.CLIENT, nullable=False)
+    is_active_courier: Mapped[bool] = mapped_column(Boolean, default=False)  # Курьер на смене
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-
+    
     orders: Mapped[list["Order"]] = relationship(back_populates="user", cascade="all, delete-orphan")
     deliveries: Mapped[list["Delivery"]] = relationship(back_populates="courier")
+
+class CourierEarning(Base):
+    __tablename__ = "courier_earnings"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    courier_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), nullable=False)
+    order_id: Mapped[int] = mapped_column(Integer, ForeignKey("orders.id"), nullable=False)
+    amount: Mapped[float] = mapped_column(Float, nullable=False)  # Заработок за заказ
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    
+    courier: Mapped["User"] = relationship()
+    order: Mapped["Order"] = relationship()
 
 class Product(Base):
     __tablename__ = "products"
